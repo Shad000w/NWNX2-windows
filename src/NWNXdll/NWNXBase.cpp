@@ -24,6 +24,7 @@
 #include "IniFile.h"
 #include <stdarg.h>
 #include <typeinfo.h>
+#include <share.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -47,7 +48,7 @@ BOOL CNWNXBase::OnCreate(const char* LogFile)
 {
 	// try to open the log file
 	m_LogFile = _strdup(LogFile);
-	fopen_s(&m_fFile, LogFile, "w");
+	m_fFile = _fsopen(m_LogFile, "w", _SH_DENYNO);
 	return (m_fFile != NULL);
 }
 
@@ -75,7 +76,7 @@ void CNWNXBase::Log(const char *pcMsg, ...)
 		if (ftell(m_fFile) > m_maxLogSizeKB)
 		{	
 			fclose(m_fFile);
-			fopen_s(&m_fFile, m_LogFile, "w");
+			m_fFile = _fsopen(m_LogFile, "w", _SH_DENYNO);
 			WriteLogHeader();
 			fprintf(m_fFile, "o Logfile hit maximum size limit, starting again.\n");
 		}
